@@ -1,6 +1,8 @@
 ### Remote View Utility
 
-Remote image capture and transfer over Reticulum. Super early, very hacky, but functional prototype. Requires OpenCV bindings for python; install via `pip install opencv-python`, or on systems like Raspberry Pi with `sudo apt install python3-opencv`.
+Remote image capture and transfer over Reticulum. Super early, very hacky, but functional prototype. Requires OpenCV bindings for python (installable via `pip install opencv-python`, or on systems like Raspberry Pi with `sudo apt install python3-opencv`). No PyPI package yet. Just clone and `make` to get a universal wheel.
+
+Feel free to hijack this project and make it into something much more fleshed out, useful and complete.
 
 ### Usage
 
