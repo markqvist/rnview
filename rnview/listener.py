@@ -119,7 +119,8 @@ class Fetcher():
     else:
         RNS.log("Link closed, exiting now")
     
-    exit(1)
+    RNS.Reticulum.exit_handler()
+    os._exit(1)
 
 
 class RemoteView():
@@ -150,6 +151,8 @@ class RemoteView():
     )
     
     RNS.log("rnview listening on "+RNS.prettyhexrep(self.destination.hash))
+
+  def announce(self):
     self.destination.announce()
 
   def image_request(self, path, data, request_id, link_id, remote_identity, requested_at):

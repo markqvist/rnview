@@ -11,7 +11,7 @@ from rnview.listener import RemoteView, Fetcher
 
 reticulum = None
 
-def program_setup(configdir, rnsconfigdir, listen, destination_hash = None, allowed = None, quality = None, width = None, height = None, output = None):
+def program_setup(configdir, rnsconfigdir, listen, destination_hash = None, allowed = None, quality = None, width = None, height = None, output = None, announce = None):
     global reticulum
     reticulum = RNS.Reticulum()
 
@@ -23,7 +23,20 @@ def program_setup(configdir, rnsconfigdir, listen, destination_hash = None, allo
 
         remote = RemoteView(os.path.expanduser(configdir), "/tmp", allowed = allowed_list)
         remote.update_frame()
-        input()
+        if announce != None:
+            remote.announce()
+
+        min_interval = 60
+        should_announce = False
+        if announce != None and announce > 0:
+            should_announce = True
+        if announce != None and announce < min_interval:
+            announce = min_interval
+        sleep = announce or min_interval
+        while True:
+            time.sleep(sleep)
+            if should_announce:
+                remote.announce()
     else:
         dest = bytes.fromhex(destination_hash)
         fetcher = Fetcher(os.path.expanduser(configdir), "/tmp", dest, quality = quality, width = width, height = height, output = output)
@@ -47,6 +60,7 @@ def main():
         parser.add_argument("--rnsconfig", action="store", default=None, help="path to alternative Reticulum config directory", type=str)
         parser.add_argument("-l", "--listen", action="store_true", default=False, help="listen for incoming connections")
         parser.add_argument('-a', metavar="allowed_hash", dest="allowed", action='append', help="accept from this identity", type=str)
+        parser.add_argument("-b", "--announce", action="store", default=None, help="announce interval in seconds", type=int)
         parser.add_argument("-q", "--quality", action="store", default=None, help="image quality (0-100)", type=int)
         parser.add_argument("-W", "--width", action="store", default=None, help="width in pixels", type=int)
         parser.add_argument("-H", "--height", action="store", default=None, help="height in pixels", type=int)
@@ -66,7 +80,7 @@ def main():
         else:
             rnsconfigarg = None
 
-        program_setup(configarg, rnsconfigarg, args.listen, args.destination_hash, allowed=args.allowed, quality=args.quality, width=args.width, height=args.height, output=args.output)
+        program_setup(configarg, rnsconfigarg, args.listen, args.destination_hash, allowed=args.allowed, quality=args.quality, width=args.width, height=args.height, output=args.output, announce=args.announce)
 
     except KeyboardInterrupt:
         print("")
